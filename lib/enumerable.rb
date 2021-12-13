@@ -29,7 +29,14 @@ module Enumerable
     result.length == length
   end
 
-  def my_any?
+  def my_any?(type = nil)
+    result = []
+    if type.instance_of?(NilClass)
+      my_each { |item| result << yield(item) if yield(item) }
+    elsif type.instance_of?(Class)
+      my_each { |item| result << true if item.instance_of?(type) }
+    end
+    result.length.positive?
   end
 
   def my_none?
@@ -59,10 +66,18 @@ end
 #puts '--------'
 #puts numbers.select { |item| item.even?}
 
+#animals = ['dog', 'cat', 'badger']
+#puts animals.my_all? { |animal| animal.length >=3 }
+#puts animals.my_all?(String)
+#puts '--------'
+#puts animals.all? { |animal| animal.length >=3 }
+#puts animals.all?(String)
+
 animals = ['dog', 'cat', 'badger']
-puts animals.my_all? { |animal| animal.length >=3 }
-puts animals.my_all?(String)
+puts animals.my_any? { |animal| animal.length >6 }
+puts animals.my_any?(String)
 puts '--------'
-puts animals.all? { |animal| animal.length >=3 }
-puts animals.all?(String)
+puts animals.any? { |animal| animal.length >6 }
+puts animals.any?(String)
+
 
