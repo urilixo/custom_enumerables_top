@@ -39,7 +39,14 @@ module Enumerable
     result.length.positive?
   end
 
-  def my_none?
+  def my_none?(type = nil)
+    result = []
+    if type.instance_of?(NilClass)
+      my_each { |item| result << yield(item) if yield(item) }
+    elsif type.instance_of?(Class)
+      my_each { |item| result << true if item.instance_of?(type) }
+    end
+    result.length.zero?
   end
 
   def my_count
@@ -73,11 +80,20 @@ end
 #puts animals.all? { |animal| animal.length >=3 }
 #puts animals.all?(String)
 
+#animals = ['dog', 'cat', 'badger']
+#puts animals.my_any? { |animal| animal.length >6 }
+#puts animals.my_any?(String)
+#puts '--------'
+#puts animals.any? { |animal| animal.length >6 }
+#puts animals.any?(String)
+
 animals = ['dog', 'cat', 'badger']
-puts animals.my_any? { |animal| animal.length >6 }
-puts animals.my_any?(String)
+puts animals.my_none? { |animal| animal == 'tiger' }
+puts animals.my_none? { |animal| animal == 'dog' }
+puts animals.my_none?(String)
 puts '--------'
-puts animals.any? { |animal| animal.length >6 }
-puts animals.any?(String)
+puts animals.none? { |animal| animal == 'tiger' }
+puts animals.none? { |animal| animal == 'dog' }
+puts animals.none?(String)
 
 
