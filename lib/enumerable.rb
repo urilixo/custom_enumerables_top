@@ -13,13 +13,20 @@ module Enumerable
 
   def my_select
     result = []
-    each do |item|
+    my_each do |item|
       result << item if yield(item)
     end
     result
   end
 
-  def my_all?
+  def my_all?(type = nil)
+    result = []
+    if type.instance_of?(NilClass)
+      my_each { |item| result << yield(item) if yield(item) }
+    elsif type.instance_of?(Class)
+      my_each { |item| result << true if item.instance_of?(type) }
+    end
+    result.length == length
   end
 
   def my_any?
@@ -47,8 +54,15 @@ end
 #numbers.my_each_with_index{ |item, index| puts "#{item}: index#{index}"}
 #numbers.each_with_index { |item, index| puts "#{item}: index#{index}"}
 
-numbers = [5, 5, 2, 6, 5]
-puts numbers.my_select { |item| item.even? }
+#numbers = [5, 5, 2, 6, 5]
+#puts numbers.my_select { |item| item.even? }
+#puts '--------'
+#puts numbers.select { |item| item.even?}
+
+animals = ['dog', 'cat', 'badger']
+puts animals.my_all? { |animal| animal.length >=3 }
+puts animals.my_all?(String)
 puts '--------'
-puts numbers.select { |item| item.even?}
+puts animals.all? { |animal| animal.length >=3 }
+puts animals.all?(String)
 
