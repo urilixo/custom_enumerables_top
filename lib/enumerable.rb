@@ -12,6 +12,11 @@ module Enumerable
   end
 
   def my_select
+    result = []
+    each do |item|
+      result << item if yield(item)
+    end
+    result
   end
 
   def my_all?
@@ -33,12 +38,17 @@ module Enumerable
   end
 end
 
-numbers = [5, 5, 2, 6, 5]
+#numbers = [1, 2, 3, 4, 5]
 #numbers.my_each { |item| puts item }
 #numbers.each { |item| puts item }
 
-numbers.my_each_with_index{ |item, index| puts "#{item}: index#{index}"}
-numbers.each_with_index { |item, index| puts "#{item}: index#{index}"}
 
+#numbers = [5, 5, 2, 6, 5]
+#numbers.my_each_with_index{ |item, index| puts "#{item}: index#{index}"}
+#numbers.each_with_index { |item, index| puts "#{item}: index#{index}"}
 
+numbers = [5, 5, 2, 6, 5]
+puts numbers.my_select { |item| item.even? }
+puts '--------'
+puts numbers.select { |item| item.even?}
 
