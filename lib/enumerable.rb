@@ -68,9 +68,13 @@ module Enumerable
     result.length
   end
 
-  def my_map
+  def my_map(proc = nil)
     result = []
-    my_each { |item| result << yield(item) } if block_given?
+    if proc.nil?
+      my_each { |item| result << yield(item) } if block_given?
+    else
+      my_each { |item| result << proc.call(item) }
+    end
     result
   end
 
@@ -182,3 +186,5 @@ multiply_els([2,4,5])
 #   #memo.length > word.length ? memo : word
 #end
 #p longest                                        #=> "sheep"
+my_map_proc = proc { |i| i*i }
+p (1..4).my_map(my_map_proc)
