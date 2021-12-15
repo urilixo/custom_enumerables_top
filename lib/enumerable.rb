@@ -96,6 +96,11 @@ module Enumerable
   end
 end
 
+def multiply_els(array)
+  p array.my_inject(1, :*)
+end
+
+multiply_els([2,4,5])
 # numbers = [1, 2, 3, 4, 5]
 # numbers.my_each { |item| puts item }
 # numbers.each { |item| puts item }
