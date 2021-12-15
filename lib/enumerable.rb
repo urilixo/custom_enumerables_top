@@ -74,13 +74,25 @@ module Enumerable
     result
   end
 
-  def my_inject(accum = 0, operator = nil)
-    if block_given?
-      my_each do |item|
-        accum = yield(accum, item)
+  def my_inject(*args)
+    @accum = 0
+    unless args.empty?
+      args.my_each do |arg|
+        @operator = arg if arg.instance_of?(Symbol)
+        @accum = arg if Numeric === arg
       end
     end
-    accum
+    if block_given?
+      @accum = self[0] if instance_of?(Array)
+      my_each do |item|
+        @accum = yield(@accum, item)
+      end
+    else
+      my_each do |b|
+        @accum = @accum.public_send @operator, b
+      end
+    end
+    @accum
   end
 end
 
@@ -153,15 +165,15 @@ end
 # p (1..4).my_map { "cat"  }   #=> ["cat", "cat", "cat", "cat"]
 
 # Sum some numbers
-#(5..10).my_inject(:+)                             #=> 45
+# p (5..10).my_inject(:+)                             #=> 45
 # Same using a block and inject
-p (5..10).my_inject { |sum, n| sum + n }            #=> 45
+# p (5..10).my_inject { |sum, n| sum + n }            #=> 45
 # Multiply some numbers
-#(5..10).my_inject(1, :*)                          #=> 151200
+# p (5..10).my_inject(1, :*)                          #=> 151200
 # Same using a block
-p (5..10).my_inject(1) { |product, n| product * n } #=> 151200
+# p (5..10).my_inject(1) { |product, n| product * n } #=> 151200
 # find the longest word
-#longest = %w{ cat sheep bear }.my_inject do |memo, word|
-#   memo.length > word.length ? memo : word
+# longest = %w{ cat sheep bear }.my_inject do |memo, word|
+#   #memo.length > word.length ? memo : word
 #end
-#longest                                        #=> "sheep"
+#p longest                                        #=> "sheep"
