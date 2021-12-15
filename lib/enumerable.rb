@@ -45,7 +45,6 @@ module Enumerable
   end
 
   def my_none?(type = nil)
-    #binding.pry
     result = []
     if block_given?
       my_each { |item| result << true unless (type =~ item).nil? } if type.instance_of?(Regexp)
@@ -57,7 +56,16 @@ module Enumerable
     result.length.zero?
   end
 
-  def my_count
+  def my_count(value = nil)
+    result = []
+    if block_given?
+      my_each { |item| result << true if yield(item) }
+    elsif !value.nil?
+      my_each { |item| result << true if item == value }
+    else
+      my_each { result << true }
+    end
+    result.length
   end
   
   def my_map
@@ -117,12 +125,17 @@ end
 # puts [nil, true, 99].my_any?                              #=> true
 # puts [].my_any?                                           #=> false
 
-puts %w{ant bear cat}.my_none? { |word| word.length == 5 } #=> true
-puts %w{ant bear cat}.my_none? { |word| word.length >= 4 } #=> false
-puts %w{ant bear cat}.my_none?(/d/)                        #=> true
-puts [1, 3.14, 42].my_none?(Float)                         #=> false
-puts [].my_none?                                           #=> true
+# puts %w{ant bear cat}.my_none? { |word| word.length == 5 } #=> true
+# puts %w{ant bear cat}.my_none? { |word| word.length >= 4 } #=> false
+# puts %w{ant bear cat}.my_none?(/d/)                        #=> true
+# puts [1, 3.14, 42].my_none?(Float)                         #=> false
+# puts [].my_none?                                           #=> true
 
-puts [nil].my_none?                                        #=> true
-puts [nil, false].my_none?                                 #=> true
-puts [nil, false, true].my_none?                           #=> false
+# puts [nil].my_none?                                        #=> true
+# puts [nil, false].my_none?                                 #=> true
+# puts [nil, false, true].my_none?                           #=> false
+
+ary = [1, 2, 4, 2]
+puts ary.my_count               #=> 4
+puts ary.my_count(2)            #=> 2
+puts ary.my_count{ |x| x%2==0 } #=> 3
